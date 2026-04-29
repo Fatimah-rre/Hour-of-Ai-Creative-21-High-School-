@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prompt Generator Template | Create AI-Ready Prompts</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * { font-family: "Inter", sans-serif; }
+
+    /* Dark mode color scheme */
+    html { color-scheme: dark; }
+    
+    /* Glass morphism effect */
+    .glass { 
+      background: rgba(255,255,255,.08); 
+      border: 1px solid rgba(255,255,255,.16); 
+    }
+    
+    .soft-shadow { 
+      box-shadow: 0 18px 60px rgba(0,0,0,.28); 
+    }
+    
+    .ring-soft { 
+      outline: 3px solid rgba(255,255,255,.10); 
+      outline-offset: 2px; 
+    }
+
+    /* Select styling */
+    select {
+      color: #fff !important;
+      background: rgba(255,255,255,.10) !important;
+      border-color: rgba(255,255,255,.18) !important;
+    }
+    
+    select option {
+      background: #1a1a2e !important;
+      color: #ffffff !important;
+    }
+    
+    select option:checked {
+      background: #16213e !important;
+    }
+
+    /* Chip/Toggle styling */
+    .chip input { display: none; }
+    .chip span { user-select: none; }
+    .chip input:checked + span {
+      background: rgba(59, 130, 246, .25);
+      border-color: rgba(59, 130, 246, .50);
+      transform: translateY(-1px);
+    }
+
+    /* Track/Path pill styling */
+    .track input { display: none; }
+    .track span {
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .55rem .85rem;
+      border-radius: 1rem;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.16);
+      font-size: .95rem;
+      transition: .15s ease;
+      line-height: 1.2;
+    }
+    
+    .track input:checked + span {
+      background: rgba(59, 130, 246, .22);
+      border-color: rgba(59, 130, 246, .45);
+      transform: translateY(-1px);
+    }
+
+    /* Animations */
+    .fade-in { animation: fadeIn .35s ease-out; }
+    @keyframes fadeIn { 
+      from { opacity: 0; transform: translateY(6px); } 
+      to { opacity: 1; transform: translateY(0); } 
+    }
+
+    /* Print styles */
+    @media print {
+      html { color-scheme: light !important; }
+      body { background: #fff !important; }
+      .fixed.inset-0 { display: none !important; }
+      .no-print { display: none !important; }
+      * { color: #111 !important; }
+      .glass { background: #fff !important; border: 1px solid #ddd !important; }
+      .soft-shadow { box-shadow: none !important; }
+      textarea, input, select {
+        background: #fff !important;
+        border-color: #ddd !important;
+      }
+      a { text-decoration: underline !important; }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen text-white">
+  <!-- Animated Background -->
+  <div class="fixed inset-0 -z-10">
+    <div class="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#475569] opacity-95"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.15),transparent_40%),radial-gradient(circle_at_80%_80%,rgba(99,102,241,0.15),transparent_40%)]"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="max-w-6xl mx-auto px-4 pt-10 pb-6">
+    <div class="glass soft-shadow rounded-3xl p-6 md:p-8">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+        <!-- Title Section -->
+        <div class="flex items-start gap-4">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15">
+              <span class="text-xl">✨</span>
+              <span class="text-sm md:text-base opacity-95">Prompt Builder</span>
+            </div>
+
+            <h1 class="mt-3 text-2xl md:text-4xl font-extrabold leading-snug">
+              AI Prompt Generator
+            </h1>
+
+            <p class="mt-2 text-white/85 leading-relaxed">
+              Create customized prompts for any AI image generation tool.
+            </p>
+
+            <!-- Selected category badge -->
+            <div class="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/15 text-sm">
+              🎯 <span class="text-white/80">Category:</span>
+              <span id="categoryBadge" class="font-bold">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-3 flex-wrap no-print">
+          <button id="btnQuickStart" class="ring-soft px-4 py-2 rounded-2xl bg-white/10 hover:bg-white/15 active:scale-[.99] transition inline-flex items-center gap-2">
+            ⚡ Quick Start
+          </button>
+
+          <button id="btnPrint" class="ring-soft px-4 py-2 rounded-2xl bg-white/10 hover:bg-white/15 active:scale-[.99] transition inline-flex items-center gap-2">
+            🖨️ Print
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 pb-14">
+    <div class="grid lg:grid-cols-3 gap-5">
+
+      <!-- Sidebar: Instructions & Info -->
+      <section class="glass soft-shadow rounded-3xl p-6 lg:col-span-1">
+        <h2 class="text-xl font-bold mb-4">📋 How to Use</h2>
+
+        <ol class="space-y-3 text-white/90 leading-relaxed">
+          <li class="flex gap-3">
+            <span class="mt-1 w-7 h-7 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-sm">1</span>
+            <div>
+              <div class="font-bold">Pick a Category</div>
+              <div class="text-sm text-white/75">Each category creates different prompt variations.</div>
+            </div>
+          </li>
+
+          <li class="flex gap-3">
+            <span class="mt-1 w-7 h-7 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-sm">2</span>
+            <div>
+              <div class="font-bold">Customize Settings</div>
+              <div class="text-sm text-white/75">Select style, mood, elements, and add notes.</div>
+            </div>
+          </li>
+
+          <li class="flex gap-3">
+            <span class="mt-1 w-7 h-7 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-sm">3</span>
+            <div>
+              <div class="font-bold">Generate Prompt</div>
+              <div class="text-sm text-white/75">Click copy or generate with your AI tool.</div>
+            </div>
+          </li>
+
+          <li class="flex gap-3">
+            <span class="mt-1 w-7 h-7 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-sm">4</span>
+            <div>
+              <div class="font-bold">Save & Share</div>
+              <div class="text-sm text-white/75">Print or export your prompts for later use.</div>
+            </div>
+          </li>
+        </ol>
+
+        <div class="mt-6 p-4 rounded-2xl bg-black/20 border border-white/10 text-sm text-white/85">
+          💡 <b>Tip:</b> Use the quick start button to load default values instantly.
+        </div>
+
+        <div class="mt-4 p-4 rounded-2xl bg-black/20 border border-white/10 text-sm text-white/85">
+          ✨ <b>Pro Tip:</b> Combine multiple elements for more creative and detailed prompts.
+        </div>
+      </section>
+
+      <!-- Main: Prompt Builder -->
+      <section class="glass soft-shadow rounded-3xl p-6 lg:col-span-2">
+        <h2 class="text-xl font-bold mb-4">🧠 Prompt Builder</h2>
+
+        <!-- Category Selection -->
+        <div class="mt-4 p-4 rounded-2xl bg-black/15 border border-white/10 no-print">
+          <label class="block text-sm text-white/80 mb-3">🎯 Select Category</label>
+
+          <div class="flex flex-wrap gap-2">
+            <label class="track">
+              <input type="radio" name="category" value="Portrait" checked>
+              <span>👤 Portrait</span>
+            </label>
+
+            <label class="track">
+              <input type="radio" name="category" value="Landscape">
+              <span>🏞️ Landscape</span>
+            </label>
+
+            <label class="track">
+              <input type="radio" name="category" value="Architecture">
+              <span>🏛️ Architecture</span>
+            </label>
+
+            <label class="track">
+              <input type="radio" name="category" value="Abstract">
+              <span>🎨 Abstract</span>
+            </label>
+
+            <label class="track">
+              <input type="radio" name="category" value="Product">
+              <span>📦 Product</span>
+            </label>
+          </div>
+
+          <p class="mt-3 text-sm text-white/70">
+            Each category adjusts the prompt tone and focus automatically.
+          </p>
+        </div>
+
+        <!-- Controls Grid -->
+        <div class="grid md:grid-cols-2 gap-4 mt-4 no-print">
+          
+          <!-- Left Column Controls -->
+          <div class="p-4 rounded-2xl bg-black/15 border border-white/10">
+            <label class="block text-sm text-white/80 mb-2">🎨 Style</label>
+            <select id="style" class="w-full rounded-xl px-3 py-2 outline-none">
+              <option value="photorealistic">Photorealistic</option>
+              <option value="3D render">3D Render</option>
+              <option value="illustration">Illustration</option>
+              <option value="oil painting">Oil Painting</option>
+              <option value="watercolor">Watercolor</option>
+              <option value="digital art">Digital Art</option>
+            </select>
+
+            <label class="block text-sm text-white/80 mt-4 mb-2">🌈 Mood/Atmosphere</label>
+            <select id="mood" class="w-full rounded-xl px-3 py-2 outline-none">
+              <option value="bright and vibrant">Bright & Vibrant</option>
+              <option value="dark and moody">Dark & Moody</option>
+              <option value="soft and peaceful">Soft & Peaceful</option>
+              <option value="dramatic and cinematic">Dramatic & Cinematic</option>
+              <option value="warm and cozy">Warm & Cozy</option>
+              <option value="cool and futuristic">Cool & Futuristic</option>
+            </select>
+
+            <label class="block text-sm text-white/80 mt-4 mb-2">💾 Quality</label>
+            <select id="quality" class="w-full rounded-xl px-3 py-2 outline-none">
+              <option value="high quality, 8k">High Quality, 8K</option>
+              <option value="ultra detailed, 4k">Ultra Detailed, 4K</option>
+              <option value="professional, masterpiece">Professional, Masterpiece</option>
+              <option value="sharp focus, well composed">Sharp Focus, Well Composed</option>
+            </select>
+          </div>
+
+          <!-- Right Column Controls -->
+          <div class="p-4 rounded-2xl bg-black/15 border border-white/10">
+            <label class="block text-sm text-white/80 mb-2">✨ Elements (Multi-select)</label>
+            <div class="flex flex-wrap gap-2">
+              <label class="chip">
+                <input type="checkbox" value="with dramatic lighting">
+                <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 text-sm transition">
+                  💡 Lighting
+                </span>
+              </label>
+
+              <label class="chip">
+                <input type="checkbox" value="with depth of field">
+                <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 text-sm transition">
+                  🎬 Depth
+                </span>
+              </label>
+
+              <label class="chip">
+                <input type="checkbox" value="with intricate details">
+                <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 text-sm transition">
+                  🔍 Details
+                </span>
+              </label>
+
+              <label class="chip">
+                <input type="checkbox" value="with vibrant colors">
+                <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 text-sm transition">
+                  🌈 Colors
+                </span>
+              </label>
+
+              <label class="chip">
+                <input type="checkbox" value="with dynamic composition">
+                <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 text-sm transition">
+                  ⚡ Dynamic
+                </span>
+              </label>
+
+              <label class="chip">
+                <input type="checkbox" value="with gradient background">
+                <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 text-sm transition">
+                  🎆 Gradient
+                </span>
+              </label>
+            </div>
+
+            <label class="block text-sm text-white/80 mt-4 mb-2">📝 Custom Note</label>
+            <input id="note" type="text" placeholder="Add additional details..." class="w-full bg-white/10 border border-white/15 rounded-xl px-3 py-2 outline-none text-sm">
+          </div>
+        </div>
+
+        <!-- Prompt Output -->
+        <div class="mt-4 p-4 rounded-2xl bg-black/15 border border-white/10">
+          <div class="flex items-center justify-between gap-3 mb-2 flex-wrap">
+            <label class="text-sm text-white/80">📌 Generated Prompt</label>
+            <div class="flex gap-2 flex-wrap justify-end no-print">
+              <button id="btnCopy" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-sm transition">
+                📋 Copy
+              </button>
+              <button id="btnCopyOpen" class="px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/25 border border-emerald-300/30 text-sm transition">
+                ✅ Copy & Open
+              </button>
+            </div>
+          </div>
+
+          <textarea id="promptOut" rows="7" class="w-full bg-white/10 border border-white/15 rounded-xl p-3 outline-none text-sm leading-relaxed"></textarea>
+          <div id="toast" class="hidden mt-2 text-sm text-emerald-200 fade-in no-print">✅ Copied to clipboard!</div>
+
+          <div class="mt-3 p-3 rounded-xl bg-white/5 border border-white/10 text-sm text-white/85 no-print">
+            💡 <b>Tip:</b> Paste this prompt into any AI image generator like DALL-E, Midjourney, or Copilot Designer.
+          </div>
+        </div>
+
+        <!-- Pre-flight Checklist -->
+        <div class="mt-4 p-4 rounded-2xl bg-black/15 border border-white/10">
+          <div class="flex items-center justify-between gap-3 flex-wrap">
+            <div class="font-bold">✅ Pre-flight Checklist</div>
+            <div id="readyBadge" class="hidden px-3 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-300/30 text-sm fade-in">
+              Ready to generate! 🚀
+            </div>
+          </div>
+
+          <div class="mt-3 grid md:grid-cols-2 gap-2 text-sm text-white/90">
+            <label class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2">
+              <input class="chk" type="checkbox">
+              <span>Category selected.</span>
+            </label>
+            <label class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2">
+              <input class="chk" type="checkbox">
+              <span>Style and mood chosen.</span>
+            </label>
+            <label class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2">
+              <input class="chk" type="checkbox">
+              <span>Quality level set.</span>
+            </label>
+            <label class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2">
+              <input class="chk" type="checkbox">
+              <span>Prompt reviewed.</span>
+            </label>
+          </div>
+        </div>
+
+      </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-8 text-center text-white/80 text-sm">
+      <div class="glass rounded-2xl py-3 px-4 inline-block">
+        Built with ✨ | AI Prompt Generator Template v1.0
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    // Configuration - Customize these values for your project
+    const CONFIG = {
+      copilotUrl: "https://copilot.microsoft.com/",
+      categoryDescriptions: {
+        "Portrait": "a beautiful portrait of a person",
+        "Landscape": "a stunning landscape scene",
+        "Architecture": "impressive architectural design",
+        "Abstract": "abstract artistic composition",
+        "Product": "a sleek product photograph"
+      }
+    };
+
+    // DOM Elements
+    const els = {
+      categoryRadios: document.querySelectorAll('input[name="category"]'),
+      style: document.getElementById("style"),
+      mood: document.getElementById("mood"),
+      quality: document.getElementById("quality"),
+      note: document.getElementById("note"),
+      promptOut: document.getElementById("promptOut"),
+      toast: document.getElementById("toast"),
+      btnCopy: document.getElementById("btnCopy"),
+      btnCopyOpen: document.getElementById("btnCopyOpen"),
+      btnQuickStart: document.getElementById("btnQuickStart"),
+      btnPrint: document.getElementById("btnPrint"),
+      categoryBadge: document.getElementById("categoryBadge"),
+      readyBadge: document.getElementById("readyBadge"),
+      chks: document.querySelectorAll(".chk"),
+      chips: document.querySelectorAll(".chip input"),
+    };
+
+    // Get selected category
+    function getSelectedCategory() {
+      const sel = document.querySelector('input[name="category"]:checked');
+      return sel ? sel.value : "";
+    }
+
+    // Update category badge
+    function refreshCategoryBadge() {
+      const cat = getSelectedCategory();
+      els.categoryBadge.textContent = cat || "—";
+    }
+
+    // Get selected elements
+    function getSelectedElements() {
+      const picked = [];
+      els.chips.forEach(ch => {
+        if (ch.checked) {
+          picked.push(ch.value);
+        }
+      });
+      return picked;
+    }
+
+    // Build the prompt
+    function buildPrompt() {
+      const category = getSelectedCategory();
+      const style = els.style.value.trim();
+      const mood = els.mood.value.trim();
+      const quality = els.quality.value.trim();
+      const note = els.note.value.trim();
+      const elements = getSelectedElements();
+
+      const categoryDesc = CONFIG.categoryDescriptions[category] || "a beautiful scene";
+      const elementsStr = elements.length ? ", " + elements.join(", ") : "";
+      const noteStr = note ? ", " + note : "";
+
+      return `${categoryDesc}, ${style}, ${mood}, ${quality}${elementsStr}${noteStr}`;
+    }
+
+    // Refresh prompt output
+    function refresh() {
+      els.promptOut.value = buildPrompt();
+    }
+
+    // Copy text to clipboard
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast();
+        return true;
+      } catch (e) {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        showToast();
+        return true;
+      }
+    }
+
+    // Show toast notification
+    function showToast() {
+      els.toast.classList.remove("hidden");
+      setTimeout(() => els.toast.classList.add("hidden"), 1200);
+    }
+
+    // Check if all checklist items are complete
+    function checkReady() {
+      const ok = [...els.chks].every(c => c.checked);
+      els.readyBadge.classList.toggle("hidden", !ok);
+    }
+
+    // Event Listeners
+    els.categoryRadios.forEach(r => {
+      r.addEventListener("change", () => {
+        refreshCategoryBadge();
+        refresh();
+      });
+    });
+
+    [els.style, els.mood, els.quality, els.note].forEach(el => {
+      el.addEventListener("input", refresh);
+    });
+
+    els.chips.forEach(ch => {
+      ch.addEventListener("change", refresh);
+    });
+
+    els.btnCopy.addEventListener("click", () => copyText(els.promptOut.value));
+
+    els.btnCopyOpen.addEventListener("click", async () => {
+      await copyText(els.promptOut.value);
+      window.open(CONFIG.copilotUrl, "_blank", "noopener");
+    });
+
+    els.btnQuickStart.addEventListener("click", () => {
+      // Select Portrait category
+      document.querySelector('input[name="category"][value="Portrait"]').checked = true;
+      
+      // Set defaults
+      els.style.value = "photorealistic";
+      els.mood.value = "bright and vibrant";
+      els.quality.value = "high quality, 8k";
+      els.note.value = "professional, award-winning, trending";
+
+      // Check some elements
+      els.chips.forEach((ch, idx) => {
+        ch.checked = idx < 3; // Select first 3 elements
+      });
+
+      refreshCategoryBadge();
+      refresh();
+    });
+
+    els.btnPrint.addEventListener("click", () => window.print());
+
+    els.chks.forEach(c => {
+      c.addEventListener("change", checkReady);
+    });
+
+    // Initialize
+    refreshCategoryBadge();
+    refresh();
+  </script>
+
+</body>
+</html>
